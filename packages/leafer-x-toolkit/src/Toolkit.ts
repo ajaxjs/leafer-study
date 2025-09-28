@@ -163,9 +163,9 @@ export class Toolkit {
    * 隐藏 toolbar
    */
   private hideToolbar() {
-    const { container, disableDefaultStyle = false } = this.config;
-    if (container && !disableDefaultStyle) {
-      addStyle(container, {
+    const { disableDefaultStyle = false } = this.config;
+    if (this.container && !disableDefaultStyle) {
+      addStyle(this.container, {
         display: 'none',
       })
     }
