@@ -3,6 +3,7 @@
         <Button variant="ghost" class="py-0 line-">文件</Button>
         <Button variant="ghost" class="py-0 line-">编辑</Button>
         <div class="flex-1"></div>
+        <UiMode />
         <DropdownMenu>
             <DropdownMenuTrigger>
                 <Button variant="ghost" class="py-0 line-">导出</Button>
@@ -22,6 +23,8 @@
 
 <script setup>
 import { Button } from '../ui/button'
+import UiMode from './TopBar/UiMode.vue'
+
 import {
     DropdownMenu,
     DropdownMenuContent,

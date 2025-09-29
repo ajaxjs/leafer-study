@@ -6,8 +6,11 @@
         <Button variant="outline" class="p-0" @click="store.addStar({ corners: 6, cornerRadius: 5 })">
             <Sparkle />
         </Button>
-        <Button variant="outline" class="p-0" @click="store.addText()">
+        <Button variant="outline" class="p-0" @click="store.addText({ resizeFontSize: true })">
             <TypeOutline />
+        </Button>
+        <Button variant="outline" class="p-0" @click="onDraw">
+            <Pen />
         </Button>
         <Button variant="outline" as="label" class="p-0">
             <input type="file" class="hidden" @change="addImage" />
@@ -19,7 +22,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { Button } from '../ui/button'
-import { Square, Sparkle, TypeOutline, ImageUp } from 'lucide-vue-next'
+import { Square, Sparkle, TypeOutline, ImageUp, Pen } from 'lucide-vue-next'
 import useStore from './stores/useStore';
 
 const store = useStore()
@@ -42,6 +45,13 @@ const addImage = (e) => {
         store.addImage(imageUrl)
     }
 
+}
+function onDraw() {
+    store.editor.draw({
+        type: 'pen',
+        color: 'red',
+        lineWidth: 2,
+    })
 }
 </script>
 

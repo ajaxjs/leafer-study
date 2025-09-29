@@ -9,17 +9,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "leafer-x-toolkit": "file:./packages/leafer-x-toolkit",
+    "@gorvey/leafer-x-easy-snap": "^1.20.1",
     "@leafer-in/animate": "^1.9.9",
     "@leafer-in/flow": "^1.9.9",
     "@leafer-in/robot": "^1.9.9",
     "@leafer-in/state": "^1.9.9",
     "@leafer-in/text-editor": "^1.9.9",
+    "@leafer-ui/interface": "^1.9.9",
     "@tailwindcss/vite": "^4.1.13",
     "@vueuse/core": "^13.9.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "leafer-editor": "^1.9.9",
+    "leafer-ui": "^1.9.9",
     "leafer-x-dot-matrix": "^1.0.2",
     "leafer-x-easy-snap": "^1.10.1",
     "leafer-x-edit-toolbar": "^1.0.5",
@@ -34,6 +36,8 @@
     "vue": "^3.5.21"
   },
   "devDependencies": {
+    "@iconify-json/radix-icons": "^1.2.5",
+    "@iconify/vue": "^5.0.0",
     "@types/node": "^24.5.2",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/tsconfig": "^0.8.1",
