@@ -4,9 +4,10 @@ import type { IHotkey } from './core'
 // 插件实例
 export declare class IPluginTempl {
     constructor(app: App, options?: IPluginOption);
-    static propName: string;
+    // 插件实例挂载到实例的属性名(未设置则不挂载到实例)
+    static propName?: string;
     static events: string[];
-    static expose: string[];
+    static public: boolean | string[];
     static hotkeys: IHotkey[];
     hotkeyEvent?: (name: string, e: KeyboardEvent) => void;
     hookImportBefore?: (...args: unknown[]) => Promise<unknown>;
@@ -14,7 +15,7 @@ export declare class IPluginTempl {
     hookSaveBefore?: (...args: unknown[]) => Promise<unknown>;
     hookSaveAfter?: (...args: unknown[]) => Promise<unknown>;
     hookTransform?: (...args: unknown[]) => Promise<unknown>;
-    app?: App;
+    //private app: App;
     [propName: string]: any;
 }
 
@@ -30,4 +31,4 @@ export declare interface IPluginClass {
     new(app: App, options?: IPluginOption): IPluginClass2;
 }
 
-export type IPluginMap = Map<string, [IPluginTempl, IPluginOption | undefined]>
+//export type IPluginMap = Map<string, [IPluginTempl, IPluginOption | undefined]>
