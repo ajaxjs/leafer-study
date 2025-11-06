@@ -4,7 +4,7 @@ import type { IHotkey } from './core'
 // 插件实例
 export declare class IPluginTempl {
     constructor(app: App, options?: IPluginOption);
-    // 插件实例挂载到实例的属性名(未设置则不挂载到实例)
+    // 插件实例挂载名，为空则不挂载到实例
     static propName?: string;
     static events: string[];
     static public: boolean | string[];

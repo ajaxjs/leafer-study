@@ -4,20 +4,34 @@ import '@leafer-in/viewport' // 导入视口插件
 import '@leafer-in/state'    // 导入交互状态插件
 import hotkeys from 'hotkeys-js';
 
+import type { IAppConfig } from 'leafer-ui'
 import type { IPluginTempl, IPluginOption, IPluginClass, IPluginClass2, IHotkey } from './interface'
-
+// 内置插件
 import Hotkey from './built-in/Hotkey';
+
 
 export class LeCore {
     [key: string]: any;
-    protected _app: App | null = null;
-    protected _focusTo: any = null;
+    protected _view: HTMLElement;
+    protected _app: App;
     // 插件map
-    private plubinMap: Map<string, [IPluginTempl, IPluginOption | undefined, boolean]> = new Map();
+    private plubinMap: Map<string, [IPluginTempl, IPluginOption | undefined]> = new Map();
     // 插件实例map
     // protected plugins: Record<string, IPluginClass2> = {};
-    constructor() {
-        console.log('Leafer App constructor')
+    constructor(options?: IAppConfig) {
+        this._view = document.createElement('div');
+        this._view.style = 'width: 100%;height:100%;overflow:hidden;min-width:0;min-height:0;';
+        this._app = new App({
+            view: this._view,
+            // 会自动创建 editor实例、tree层、sky层
+            editor: {
+                //circle: {}, // 显示旋转控制点
+                middlePoint: { width: 12, height: 4, cornerRadius: 2 },
+            },
+            ...options,
+        })
+        this.use(Hotkey);
+        console.log('Leafer App constructor', this._app)
     }
     get app() {
         return this._app
@@ -25,63 +39,43 @@ export class LeCore {
     // 挂载到指定元素
     mount(view: HTMLElement | string) {
         if (typeof view === 'string') {
-            view = document.querySelector(view) as HTMLElement
+            view = document.querySelector(view) as HTMLElement;
             if (!view) {
                 throw new Error(`Leafer App mount: ${view} not found, run after mounted.`)
             }
         }
-        view.style.position = 'relative';
-        view.style.minWidth = '0px';
-        if (!this._app) {
-            this._app = new App({
-                view,
-                // 会自动创建 editor实例、tree层、sky层
-                editor: {
-                    //circle: {}, // 显示旋转控制点
-                    middlePoint: { width: 12, height: 4, cornerRadius: 2 },
-                },
-            })
-        }
-        this.use(Hotkey)
+        view.style.minWidth = '0';
+        view.style.minHeight = '0';
+        // 挂载到指定元素
+        view.appendChild(this._view)
     }
     // 注册插件
     use(pluginTempl: IPluginTempl, options?: IPluginOption) {
-        const { name } = pluginTempl;
+        const { name, propName } = pluginTempl;
         if (this.plubinMap.has(name)) {
             throw new Error(`plugin ${name} already used`)
         }
-        let isInstalled = false
-        // 如果已挂载，实例化插件
-        if (this._app) {
-            isInstalled = true
-            this._installPlugin(pluginTempl, options)
+        if (propName && this[propName] as IPluginClass2) {
+            throw new Error(`plugin ${propName} already installed`)
+        } else if (propName && this[propName] !== undefined) {
+            throw new Error(`${propName} is an illegal plugin`)
         }
-        this.plubinMap.set(name, [pluginTempl, options, isInstalled]);
-    }
-    // 安装插件
-    private _installPlugin(pluginTempl: IPluginTempl, options?: IPluginOption) {
-        const { name, propName } = pluginTempl
-        const instance = new (pluginTempl as IPluginClass)(this._app!, options)
-        if (propName) {
-            if (this[propName] as IPluginClass2) {
-                throw new Error(`plugin ${propName} already installed`)
-            } else if (this[propName] !== undefined) {
-                throw new Error(`${propName} is an illegal plugin`)
-            }
-            // 实例化，并挂载到实例
-            this[propName] = instance
-        }
+        // 初始化组件实例
+        const instance = new (pluginTempl as IPluginClass)(this._app, options)
         // 绑定快捷按键
-        instance.hotkeys.forEach((item: IHotkey) => {
+        instance.hotkeys?.forEach((item: IHotkey) => {
             const { hotkey, handler } = item
-            //hotkeys(hotkey, handler.bind(instance))
             hotkeys(hotkey, (e: KeyboardEvent) => {
                 e.preventDefault();
                 handler.call(instance, e)
             })
         })
-
-        this.plubinMap.set(name, [pluginTempl, options, true]);
+        // 挂载到实例
+        if (propName) this[propName] = instance;
+        // 插件map记录
+        this.plubinMap.set(name, [pluginTempl, options]);
     }
-
+    destroy() {
+        this._app.destroy();
+    }
 }
